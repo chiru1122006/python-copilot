@@ -1,4 +1,4 @@
-# Agentic AI Career Platform - Python Dependencies
+
 # Optimized for Azure App Service deployment (Python 3.11)
 
 # Core Flask
@@ -27,3 +27,4 @@ numpy>=1.26.0,<2.0.0
 tokenizers>=0.15.0
 transformers>=4.36.0
 sentence-transformers>=2.2.2
+
