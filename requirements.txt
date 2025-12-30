@@ -1,23 +1,12 @@
-# Agentic AI Career Platform - Python Dependencies
-# Optimized for Azure App Service deployment
-
-# Core Flask
 flask==3.0.0
 flask-cors==4.0.0
 gunicorn==21.2.0
-
-# Environment & Config
 python-dotenv==1.0.0
 pydantic==2.5.2
-
-# Database
 mysql-connector-python==8.2.0
-
-# API & HTTP
 openai==1.6.0
 requests==2.31.0
-
-# ML/AI - Minimal versions (torch will be installed by sentence-transformers)
 numpy==1.26.4
-transformers==4.35.0
+transformers==4.30.2
+tokenizers==0.13.3
 sentence-transformers==2.2.2
