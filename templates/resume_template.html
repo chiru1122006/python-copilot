@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ header.name }} - Resume</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            color: #333;
+            background: white;
+        }
+        
+        /* Header Bar - Matches the teal blue in the design */
+        .header {
+            background-color: #2e6677;
+            color: white;
+            text-align: center;
+            padding: 35px 20px;
+        }
+        
+        .header h1 {
+            font-size: 28pt;
+            font-weight: 400;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .header h2 {
+            font-size: 11pt;
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.95;
+        }
+        
+        /* Main Container - Two Column Layout */
+        .container {
+            display: flex;
+            min-height: calc(100vh - 120px);
+        }
+        
+        /* Left Column (35%) */
+        .left-column {
+            width: 35%;
+            background-color: #f5f6f7;
+            padding: 30px 25px;
+        }
+        
+        /* Right Column (65%) */
+        .right-column {
+            width: 65%;
+            padding: 30px 30px;
+            background: white;
+        }
+        
+        /* Section Headers */
+        .section-title {
+            font-size: 11pt;
+            font-weight: 600;
+            color: #2e6677;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+            padding-bottom: 6px;
+            border-bottom: 1.5px solid #2e6677;
+        }
+        
+        .section {
+            margin-bottom: 28px;
+        }
+        
+        /* Contact Section */
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            font-size: 9pt;
+        }
+        
+        .contact-label {
+            color: #2e6677;
+            font-weight: 600;
+            min-width: 65px;
+            margin-right: 12px;
+        }
+        
+        .contact-value {
+            color: #444;
+            word-break: break-word;
+            flex: 1;
+        }
+        
+        /* Summary */
+        .summary-text {
+            font-size: 9.5pt;
+            color: #444;
+            text-align: justify;
+            line-height: 1.6;
+            font-style: italic;
+        }
+        
+        /* Education */
+        .education-item {
+            margin-bottom: 18px;
+        }
+        
+        .education-year {
+            font-size: 9pt;
+            color: #2e6677;
+            font-style: italic;
+            margin-bottom: 4px;
+        }
+        
+        .education-degree {
+            font-size: 10pt;
+            font-weight: 600;
+            color: #222;
+        }
+        
+        .education-honors {
+            font-size: 9pt;
+            color: #555;
+            font-style: italic;
+        }
+        
+        .education-institution {
+            font-size: 9pt;
+            color: #666;
+            margin-top: 2px;
+        }
+        
+        .education-details {
+            font-size: 8.5pt;
+            color: #666;
+            margin-top: 6px;
+        }
+        
+        .education-detail-label {
+            font-style: italic;
+            color: #2e6677;
+        }
+        
+        /* Skills with Progress Bars - Matches the design */
+        .skill-item {
+            margin-bottom: 14px;
+        }
+        
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .skill-name {
+            font-size: 9pt;
+            color: #333;
+        }
+        
+        .skill-level {
+            font-size: 9pt;
+            color: #2e6677;
+            font-weight: 600;
+        }
+        
+        .skill-bar {
+            background: #ddd;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .skill-fill {
+            background: #2e6677;
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Experience Section */
+        .experience-item {
+            margin-bottom: 22px;
+            page-break-inside: avoid;
+        }
+        
+        .experience-header {
+            margin-bottom: 10px;
+        }
+        
+        .experience-duration {
+            font-size: 9pt;
+            color: #2e6677;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .experience-role {
+            font-size: 11pt;
+            font-weight: 600;
+            color: #222;
+            font-style: italic;
+        }
+        
+        .experience-company {
+            font-size: 9.5pt;
+            color: #2e6677;
+            font-weight: 500;
+        }
+        
+        .experience-points {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        
+        .experience-points li {
+            font-size: 9pt;
+            color: #444;
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+        
+        /* Projects Section */
+        .project-item {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+        
+        .project-title {
+            font-size: 10.5pt;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 4px;
+        }
+        
+        .project-tech {
+            font-size: 8.5pt;
+            color: #2e6677;
+            font-style: italic;
+            margin-bottom: 6px;
+        }
+        
+        .project-points {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        
+        .project-points li {
+            font-size: 9pt;
+            color: #444;
+            margin-bottom: 5px;
+            line-height: 1.5;
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .header {
+                background-color: #2e6677 !important;
+                -webkit-print-color-adjust: exact;
+            }
+            
+            .skill-fill {
+                background-color: #2e6677 !important;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>{{ header.name }}</h1>
+        <h2>{{ header.title }}</h2>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Left Column -->
+        <div class="left-column">
+            <!-- Contact -->
+            <div class="section">
+                <div class="section-title">Contact</div>
+                {% if contact.phone %}
+                <div class="contact-item">
+                    <span class="contact-label">phone</span>
+                    <span class="contact-value">{{ contact.phone }}</span>
+                </div>
+                {% endif %}
+                {% if contact.email %}
+                <div class="contact-item">
+                    <span class="contact-label">email</span>
+                    <span class="contact-value">{{ contact.email }}</span>
+                </div>
+                {% endif %}
+                {% if contact.address %}
+                <div class="contact-item">
+                    <span class="contact-label">address</span>
+                    <span class="contact-value">{{ contact.address }}</span>
+                </div>
+                {% endif %}
+                {% if contact.website %}
+                <div class="contact-item">
+                    <span class="contact-label">website</span>
+                    <span class="contact-value">{{ contact.website }}</span>
+                </div>
+                {% endif %}
+                {% if contact.linkedin %}
+                <div class="contact-item">
+                    <span class="contact-label">linkedin</span>
+                    <span class="contact-value">{{ contact.linkedin }}</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Summary -->
+            {% if summary %}
+            <div class="section">
+                <div class="section-title">Summary</div>
+                <p class="summary-text">{{ summary }}</p>
+            </div>
+            {% endif %}
+            
+            <!-- Education -->
+            {% if education %}
+            <div class="section">
+                <div class="section-title">Education</div>
+                {% for edu in education %}
+                <div class="education-item">
+                    <div class="education-year">{{ edu.year }}</div>
+                    <div class="education-degree">{{ edu.degree }}</div>
+                    {% if edu.details %}
+                    <div class="education-honors">{{ edu.details }}</div>
+                    {% endif %}
+                    <div class="education-institution">{{ edu.institution }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Skills -->
+            {% if skills %}
+            <div class="section">
+                <div class="section-title">Relevant Skills</div>
+                {% for skill in skills %}
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <span class="skill-name">{{ skill.name }}</span>
+                        <span class="skill-level">{{ skill.level }}%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" style="width: {{ skill.level }}%;"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Right Column -->
+        <div class="right-column">
+            <!-- Professional Experience -->
+            {% if experience %}
+            <div class="section">
+                <div class="section-title">Professional Experience</div>
+                {% for exp in experience %}
+                <div class="experience-item">
+                    <div class="experience-header">
+                        <div class="experience-duration">{{ exp.duration }}</div>
+                        <div class="experience-role">{{ exp.role }}</div>
+                        <div class="experience-company">{{ exp.company }}{% if exp.location %}, {{ exp.location }}{% endif %}</div>
+                    </div>
+                    {% if exp.points %}
+                    <ul class="experience-points">
+                        {% for point in exp.points %}
+                        <li>{{ point }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <!-- Projects -->
+            {% if projects %}
+            <div class="section">
+                <div class="section-title">Projects</div>
+                {% for project in projects %}
+                <div class="project-item">
+                    <div class="project-title">{{ project.title }}</div>
+                    {% if project.tech_stack %}
+                    <div class="project-tech">{{ project.tech_stack | join(', ') }}</div>
+                    {% endif %}
+                    {% if project.points %}
+                    <ul class="project-points">
+                        {% for point in project.points %}
+                        <li>{{ point }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
