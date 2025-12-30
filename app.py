@@ -12,15 +12,7 @@ from database import db
 from decimal import Decimal
 from datetime import datetime, date
 import json
-from fastapi import FastAPI
 
-
-@app.get("/")
-def home():
-    return {
-        "status": "ok",
-        "message": "Agentic Career AI backend running"
-    }
 # Custom JSON encoder to handle Decimal and datetime types
 class CustomJSONProvider(DefaultJSONProvider):
     def default(self, obj):
@@ -1436,11 +1428,12 @@ def delete_project_endpoint(project_id):
 # ==========================================
 
 if __name__ == '__main__':
-    print(f"Starting Career Agent Service on port {Config.SERVICE_PORT}")
+    # Get port from environment variable (Azure sets this)
+    port = int(os.environ.get('PORT', Config.SERVICE_PORT))
+    print(f"Starting Career Agent Service on port {port}")
     app.run(
         host='0.0.0.0',
-        port=Config.SERVICE_PORT,
+        port=port,
         debug=False,
         use_reloader=False
     )
-
