@@ -12,7 +12,15 @@ from database import db
 from decimal import Decimal
 from datetime import datetime, date
 import json
+from fastapi import FastAPI
 
+
+@app.get("/")
+def home():
+    return {
+        "status": "ok",
+        "message": "Agentic Career AI backend running"
+    }
 # Custom JSON encoder to handle Decimal and datetime types
 class CustomJSONProvider(DefaultJSONProvider):
     def default(self, obj):
@@ -1435,3 +1443,4 @@ if __name__ == '__main__':
         debug=False,
         use_reloader=False
     )
+
