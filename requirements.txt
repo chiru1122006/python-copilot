@@ -1,12 +1,24 @@
+# Agentic AI Career Platform - Python Dependencies
+# Optimized for cloud deployment (no Rust/build required)
+
+# Core Flask
 flask==3.0.0
 flask-cors==4.0.0
 gunicorn==21.2.0
+
+# Environment & Config
 python-dotenv==1.0.0
-pydantic==2.5.2
+pydantic==2.4.2
+
+# Database
 mysql-connector-python==8.2.0
+
+# API & HTTP
 openai==1.6.0
 requests==2.31.0
-numpy==1.26.4
+
+# ML/AI - Pre-built wheels only
+numpy==1.24.3
 transformers==4.30.2
 tokenizers==0.13.3
 sentence-transformers==2.2.2
