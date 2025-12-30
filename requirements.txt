@@ -17,11 +17,7 @@ mysql-connector-python==8.2.0
 openai==1.6.0
 requests==2.31.0
 
-# ML/AI - Lighter versions for Azure
+# ML/AI - Minimal versions (torch will be installed by sentence-transformers)
 numpy==1.26.4
-sentence-transformers==2.2.2
-torch==2.0.0
 transformers==4.35.0
-
-# PDF Generation
-reportlab==4.0.0
+sentence-transformers==2.2.2
