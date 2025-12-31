@@ -1,5 +1,6 @@
 """
 Database connection and helper functions
+Optimized for Azure MySQL and local development
 """
 import mysql.connector
 from mysql.connector import Error
@@ -7,6 +8,7 @@ from config import Config
 from decimal import Decimal
 from datetime import datetime, date
 import json
+import os
 
 
 def convert_decimals(obj):
@@ -27,14 +29,25 @@ class Database:
         self.connection = None
         
     def connect(self):
-        """Establish database connection"""
+        """Establish database connection with Azure MySQL support"""
         try:
-            self.connection = mysql.connector.connect(
-                host=Config.DB_HOST,
-                user=Config.DB_USER,
-                password=Config.DB_PASSWORD,
-                database=Config.DB_NAME
-            )
+            # Base connection config
+            config = {
+                'host': Config.DB_HOST,
+                'user': Config.DB_USER,
+                'password': Config.DB_PASSWORD,
+                'database': Config.DB_NAME,
+                'port': Config.DB_PORT,
+                'connection_timeout': 30,
+                'autocommit': True
+            }
+            
+            # Add SSL for Azure MySQL (required for Azure Database for MySQL)
+            if Config.DB_SSL or Config.IS_AZURE:
+                config['ssl_disabled'] = False
+                config['ssl_verify_cert'] = False
+            
+            self.connection = mysql.connector.connect(**config)
             return self.connection
         except Error as e:
             print(f"Database connection error: {e}")
