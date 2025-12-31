@@ -10,14 +10,31 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from typing import Dict, Any, List, Optional
 from datetime import datetime
-from database import db
-from agents import (
-    reasoning_agent, 
-    skill_gap_agent, 
-    planner_agent, 
-    feedback_agent,
-    get_embedding_generator
-)
+
+# Import database with error handling
+try:
+    from database import db
+except Exception as e:
+    print(f"Orchestrator: Database import error: {e}")
+    db = None
+
+# Import agents with error handling
+try:
+    from agents import (
+        reasoning_agent, 
+        skill_gap_agent, 
+        planner_agent, 
+        feedback_agent,
+        get_embedding_generator
+    )
+except Exception as e:
+    print(f"Orchestrator: Agents import error: {e}")
+    reasoning_agent = None
+    skill_gap_agent = None
+    planner_agent = None
+    feedback_agent = None
+    def get_embedding_generator():
+        return None
 
 
 class AgentOrchestrator:
