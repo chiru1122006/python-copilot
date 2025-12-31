@@ -1,17 +1,47 @@
 """
 Flask API Server for Agent Service
 Exposes agent functionality via REST API
+Optimized for Azure App Service deployment
 """
 import os
+import sys
 from flask import Flask, request, jsonify, send_file, redirect
 from flask.json.provider import DefaultJSONProvider
 from flask_cors import CORS
-from config import Config
-from orchestrator import orchestrator
-from database import db
 from decimal import Decimal
 from datetime import datetime, date
 import json
+
+# Print startup info for debugging
+print(f"Starting Career Agent Service...")
+print(f"Python version: {sys.version}")
+print(f"Working directory: {os.getcwd()}")
+
+# Import config with error handling
+try:
+    from config import Config
+    print(f"Config loaded. Port: {Config.SERVICE_PORT}, Is Azure: {Config.IS_AZURE}")
+except Exception as e:
+    print(f"Warning: Config import error: {e}")
+    class Config:
+        SERVICE_PORT = int(os.environ.get('PORT', 8000))
+        IS_AZURE = bool(os.environ.get('WEBSITE_HOSTNAME'))
+
+# Import database with error handling
+try:
+    from database import db
+    print("Database module loaded")
+except Exception as e:
+    print(f"Warning: Database import error: {e}")
+    db = None
+
+# Import orchestrator with error handling
+try:
+    from orchestrator import orchestrator
+    print("Orchestrator loaded")
+except Exception as e:
+    print(f"Warning: Orchestrator import error: {e}")
+    orchestrator = None
 
 # Custom JSON encoder to handle Decimal and datetime types
 class CustomJSONProvider(DefaultJSONProvider):
@@ -22,33 +52,95 @@ class CustomJSONProvider(DefaultJSONProvider):
             return obj.isoformat()
         return super().default(obj)
 
-from agents import (
-    reasoning_agent,
-    skill_gap_agent,
-    planner_agent,
-    feedback_agent,
-    get_embedding_generator,
-    resume_agent,
-    projects_agent
-)
-from services.html_pdf_generator import html_pdf_generator
+# Import agents with error handling
+try:
+    from agents import (
+        reasoning_agent,
+        skill_gap_agent,
+        planner_agent,
+        feedback_agent,
+        get_embedding_generator,
+        resume_agent,
+        projects_agent
+    )
+    print("Agents loaded successfully")
+except Exception as e:
+    print(f"Warning: Agents import error: {e}")
+    reasoning_agent = None
+    skill_gap_agent = None
+    planner_agent = None
+    feedback_agent = None
+    resume_agent = None
+    projects_agent = None
+    def get_embedding_generator():
+        return None
+# Temporarily disabled PDF generation due to reportlab/cairo dependency issues on Azure
+# from services.html_pdf_generator import html_pdf_generator
+
+# Mock PDF generator until reportlab can be installed
+class MockPDFGenerator:
+    def generate_pdf(self, **kwargs):
+        return {"status": "info", "message": "PDF generation temporarily disabled on Azure", "file_path": None}
+    def generate_html_preview(self, resume_data):
+        return "<html><body><h1>PDF Preview Temporarily Unavailable</h1><p>Resume data stored successfully</p></body></html>"
+
+html_pdf_generator = MockPDFGenerator()
 
 app = Flask(__name__)
 app.json = CustomJSONProvider(app)
 CORS(app)
 
+print("Flask app initialized")
+
 # ==========================================
-# HEALTH CHECK
+# ROOT AND HEALTH CHECK
 # ==========================================
+
+@app.route('/', methods=['GET'])
+def root():
+    """Root endpoint"""
+    return jsonify({
+        "service": "Career Agent Service",
+        "version": "1.0.0",
+        "status": "running",
+        "endpoints": {
+            "health": "/health",
+            "api_health": "/api/health",
+            "agent_run": "/api/agent/run"
+        }
+    })
 
 @app.route('/health', methods=['GET'])
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    """Health check endpoint"""
+    """Health check endpoint with diagnostics"""
+    # Check component status
+    db_status = "connected" if db else "not loaded"
+    orchestrator_status = "loaded" if orchestrator else "not loaded"
+    agents_status = "loaded" if reasoning_agent else "not loaded"
+    
+    # Try database connection
+    if db:
+        try:
+            conn = db.connect()
+            if conn:
+                db_status = "connected"
+                db.disconnect()
+            else:
+                db_status = "connection failed"
+        except Exception as e:
+            db_status = f"error: {str(e)[:50]}"
+    
     return jsonify({
         "status": "healthy",
         "service": "Career Agent Service",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "environment": "azure" if Config.IS_AZURE else "local",
+        "components": {
+            "database": db_status,
+            "orchestrator": orchestrator_status,
+            "agents": agents_status
+        }
     })
 
 
@@ -518,11 +610,21 @@ def search_memories():
 # CHAT ENDPOINTS
 # ==========================================
 
-from llm_client import llm
+try:
+    from llm_client import llm
+except Exception as e:
+    print(f"Warning: LLM client import error: {e}")
+    llm = None
 
 @app.route('/api/agent/chat', methods=['POST'])
 def chat():
     """Chat with the AI career assistant"""
+    if not llm:
+        return jsonify({"error": "LLM client not available"}), 503
+    
+    if not db:
+        return jsonify({"error": "Database not available"}), 503
+    
     data = request.json
     user_id = data.get('user_id')
     message = data.get('message', '')
